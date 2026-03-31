@@ -1,1 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEONBET • Casa de Apostas Falsa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    body {
+      background: #0a0a0a;
+      font-family: 'Press Start 2P', system-ui;
+    }
+    
+    .neon-text {
+      text-shadow: 
+        0 0 10px #c026d3,
+        0 0 20px #c026d3;
+    }
+    
+    .casino-header {
+      background: linear-gradient(90deg, #1a0033, #330066);
+      border-bottom: 4px solid #c026d3;
+    }
+    
+    .reel {
+      transition: transform 0.1s linear;
+    }
+    
+    .game-container {
+      background-size: cover;
+      background-position: center;
+      border: 6px solid #c026d3;
+      box-shadow: 0 0 30px #c026d3;
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen pb-12">
+  <div class="max-w-7xl mx-auto">
+    <!-- HEADER CASINO -->
+    <div class="casino-header p-6 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <i class="fas fa-dice-six text-5xl text-yellow-400"></i>
+        <h1 class="text-5xl font-bold neon-text tracking-widest">NEONBET</h1>
+      </div>
+      
+      <div class="flex items-center gap-8 text-xl">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-coins text-yellow-400"></i>
+          <span class="font-bold">Saldo:</span>
+          <span id="balance" class="text-3xl text-yellow-400 font-bold">5000</span>
+          <span class="text-yellow-400">R$</span>
+        </div>
+        
+        <button onclick="resetBalance()" 
+                class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-2xl flex items-center gap-2 text-sm">
+          <i class="fas fa-redo"></i> RESETAR
+        </button>
+      </div>
+    </div>
 
+    <!-- MENU JOGOS -->
+    <div class="flex justify-center gap-2 bg-black/80 py-4 border-b border-purple-500">
+      <button onclick="switchGame(0)" 
+              class="tab-btn px-10 py-4 rounded-3xl text-xl font-bold flex items-center gap-3 hover:scale-105 transition active:bg-purple-700"
+              id="tab-0">
+        <i class="fas fa-dice"></i> CAÇA-NÍQUEIS
+      </button>
+      <button onclick="switchGame(1)" 
+              class="tab-btn px-10 py-4 rounded-3xl text-xl font-bold flex items-center gap-3 hover:scale-105 transition"
+              id="tab-1">
+        <i class="fas fa-bomb"></i> MINAS
+      </button>
+      <button onclick="switchGame(2)" 
+              class="tab-btn px-10 py-4 rounded-3xl text-xl font-bold flex items-center gap-3 hover:scale-105 transition"
+              id="tab-2">
+        <i class="fas fa-rocket"></i> CRASH
+      </button>
+    </div>
+
+    <!-- CONTEÚDO DOS JOGOS -->
+    <div id="game-container" class="p-8"></div>
+  </div>
+
+  <script>
+    // === VARIÁVEIS GLOBAIS ===
+    let balance = 5000;
+    let currentGame = 0;
+    let currentBet = 50;
+
+    const symbols = ['🍒', '🍋', '🍉', '🔔', '💎', '⭐', '7️⃣', '🔥']; // 8 símbolos (podes trocar por imgs tuas)
+
+    // Atualiza saldo na tela
+    function updateBalance() {
+      document.getElementById('balance').textContent = balance;
+    }
+
+    // Troca de jogo
+    function switchGame(n) {
+      currentGame = n;
+      document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('bg-purple-700', i === n);
+        btn.classList.toggle('bg-purple-600', i !== n);
+      });
+      renderGame();
+    }
+
+    // Renderiza o jogo atual
+    function renderGame() {
+      const container = document.getElementById('game-container');
+      
+      if (currentGame === 0) {
+        // ====================== SLOTS ======================
+        container.innerHTML = `
+          <div class="max-w-2xl mx-auto">
+            <h2 class="text-center text-4xl mb-6 text-yellow-300">🎰 CAÇA-NÍQUEIS</h2>
+            
+            <!-- Background com a tua imagem de slots -->
+            <div class="game-container rounded-3xl p-8 flex justify-center gap-6 items-center min-h-[420px]" 
+                 style="background-image: url('imagem_2026-03-31_203433265.png');">
+              
+              <div id="reel1" class="reel w-28 h-28 bg-black/90 rounded-2xl flex items-center justify-center text-7xl shadow-inner border-4 border-yellow-400">🍒</div>
+              <div id="reel2" class="reel w-28 h-28 bg-black/90 rounded-2xl flex items-center justify-center text-7xl shadow-inner border-4 border-yellow-400">🍒</div>
+              <div id="reel3" class="reel w-28 h-28 bg-black/90 rounded-2xl flex items-center justify-center text-7xl shadow-inner border-4 border-yellow-400">🍒</div>
+            </div>
+
+            <div class="flex justify-center mt-8 gap-6">
+              <div class="text-center">
+                <p class="text-sm text-gray-400 mb-1">APOSTA</p>
+                <div class="flex gap-3 text-3xl">
+                  <button onclick="changeBet(-10)" class="w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-2xl">-</button>
+                  <span id="bet-amount" class="font-bold px-8 py-3 bg-black/60 rounded-2xl min-w-[110px]">${currentBet}</span>
+                  <button onclick="changeBet(10)" class="w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-2xl">+</button>
+                </div>
+              </div>
+              
+              <button onclick="spinSlots()" 
+                      class="px-16 py-6 text-4xl font-bold bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-3xl hover:scale-110 transition shadow-xl flex items-center gap-4">
+                <i class="fas fa-spin fa-dice"></i>
+                GIRAR
+              </button>
+            </div>
+          </div>
+        `;
+      } 
+      else if (currentGame === 1) {
+        // ====================== MINAS ======================
+        container.innerHTML = `
+          <div class="max-w-3xl mx-auto">
+            <h2 class="text-center text-4xl mb-6 text-red-400">💣 MINAS</h2>
+            
+            <!-- Background com a tua imagem de mines -->
+            <div class="game-container rounded-3xl p-8 min-h-[520px] flex flex-col items-center" 
+                 style="background-image: url('imagem_2026-03-31_203456939.png'); background-size: cover;">
+              
+              <div class="flex w-full justify-between mb-6 max-w-md">
+                <div class="text-center">
+                  <p class="text-xs text-gray-400">APOSTA</p>
+                  <span class="text-3xl font-bold text-yellow-300">${currentBet} R$</span>
+                </div>
+                <div id="mines-multiplier" class="text-center text-4xl font-bold text-green-400">1.00x</div>
+                <button onclick="cashOutMines()" 
+                        class="px-8 py-3 bg-green-500 hover:bg-green-600 text-black font-bold rounded-2xl text-xl">RETIRAR</button>
+              </div>
+              
+              <div id="mines-grid" class="grid grid-cols-5 gap-3 max-w-md mx-auto"></div>
+              
+              <button onclick="startMines()" 
+                      class="mt-8 px-12 py-4 bg-red-600 hover:bg-red-700 text-xl font-bold rounded-3xl">INICIAR NOVA RODADA</button>
+            </div>
+          </div>
+        `;
+        createMinesGrid();
+      } 
+      else if (currentGame === 2) {
+        // ====================== CRASH ======================
+        container.innerHTML = `
+          <div class="max-w-4xl mx-auto">
+            <h2 class="text-center text-4xl mb-6 text-cyan-400">🚀 CRASH</h2>
+            
+            <!-- Background com a tua imagem de crash -->
+            <div class="game-container rounded-3xl p-8 min-h-[520px] flex flex-col items-center" 
+                 style="background-image: url('imagem_2026-03-31_203542102.png'); background-size: cover;">
+              
+              <canvas id="crash-canvas" width="800" height="360" class="bg-black/70 rounded-2xl"></canvas>
+              
+              <div class="flex w-full max-w-md justify-between items-end mt-8">
+                <div>
+                  <p class="text-xs text-gray-400">APOSTA</p>
+                  <div class="text-4xl font-bold text-yellow-300">${currentBet} R$</div>
+                </div>
+                
+                <div class="text-center">
+                  <div id="crash-multiplier" class="text-6xl font-bold text-cyan-400">1.00x</div>
+                  <div id="crash-status" class="text-sm text-gray-400">Aguardando...</div>
+                </div>
+                
+                <div class="flex flex-col gap-3">
+                  <button onclick="placeCrashBet()" 
+                          id="bet-crash-btn"
+                          class="px-10 py-5 bg-gradient-to-r from-red-500 to-pink-600 text-xl font-bold rounded-3xl">APOSTAR</button>
+                  <button onclick="cashOutCrash()" 
+                          id="cashout-crash-btn"
+                          class="hidden px-10 py-5 bg-green-500 text-black text-xl font-bold rounded-3xl">RETIRAR AGORA</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        setTimeout(initCrash, 100);
+      }
+      
+      updateBalance();
+    }
+
+    // ====================== SLOTS ======================
+    function changeBet(delta) {
+      currentBet = Math.max(10, Math.min(500, currentBet + delta));
+      if (document.getElementById('bet-amount')) {
+        document.getElementById('bet-amount').textContent = currentBet;
+      }
+    }
+
+    function spinSlots() {
+      if (balance < currentBet) {
+        alert("💸 Saldo insuficiente!");
+        return;
+      }
+      
+      balance -= currentBet;
+      updateBalance();
+      
+      const reel1 = document.getElementById('reel1');
+      const reel2 = document.getElementById('reel2');
+      const reel3 = document.getElementById('reel3');
+      
+      let spinsLeft = 35;
+      const interval = setInterval(() => {
+        reel1.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        reel2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        reel3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        
+        spinsLeft--;
+        if (spinsLeft <= 0) {
+          clearInterval(interval);
+          
+          // Resultado final
+          const final1 = symbols[Math.floor(Math.random() * symbols.length)];
+          const final2 = symbols[Math.floor(Math.random() * symbols.length)];
+          const final3 = symbols[Math.floor(Math.random() * symbols.length)];
+          
+          reel1.textContent = final1;
+          reel2.textContent = final2;
+          reel3.textContent = final3;
+          
+          // Lógica simples de vitória (melhora depois se quiseres)
+          if (final1 === final2 && final2 === final3) {
+            const win = currentBet * 12;
+            balance += win;
+            alert(`🎉 JACKPOT!!! +${win} R$`);
+          } else if (final1 === final2 || final2 === final3) {
+            const win = currentBet * 3;
+            balance += win;
+            alert(`👍 Boa! +${win} R$`);
+          } else {
+            alert("😢 Perdeste esta rodada...");
+          }
+          updateBalance();
+        }
+      }, 45);
+    }
+
+    // ====================== MINAS ======================
+    let minesPositions = [];
+    let openedTiles = 0;
+    let minesInPlay = false;
+
+    function createMinesGrid() {
+      const grid = document.getElementById('mines-grid');
+      grid.innerHTML = '';
+      minesPositions = [];
+      
+      // 5 minas em 25 casas
+      while (minesPositions.length < 5) {
+        const pos = Math.floor(Math.random() * 25);
+        if (!minesPositions.includes(pos)) minesPositions.push(pos);
+      }
+      
+      for (let i = 0; i < 25; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'w-16 h-16 bg-black/70 hover:bg-purple-600 rounded-2xl flex items-center justify-center text-5xl cursor-pointer border-2 border-purple-400 transition';
+        tile.dataset.index = i;
+        tile.onclick = () => openTile(tile);
+        grid.appendChild(tile);
+      }
+      openedTiles = 0;
+      minesInPlay = true;
+      document.getElementById('mines-multiplier').textContent = '1.00x';
+    }
+
+    function openTile(tile) {
+      if (!minesInPlay) return;
+      
+      const index = parseInt(tile.dataset.index);
+      
+      if (minesPositions.includes(index)) {
+        // Explosão!
+        tile.innerHTML = '💥';
+        tile.style.backgroundColor = '#b91c1c';
+        alert('💣 BOOM! Perdeste a aposta.');
+        minesInPlay = false;
+      } else {
+        // Safe
+        openedTiles++;
+        tile.innerHTML = '✅';
+        tile.style.backgroundColor = '#15803d';
+        tile.style.pointerEvents = 'none';
+        
+        // Multiplicador aumenta
+        const multiplier = (1 + openedTiles * 0.4).toFixed(2);
+        document.getElementById('mines-multiplier').textContent = `${multiplier}x`;
+      }
+    }
+
+    function cashOutMines() {
+      if (!minesInPlay || openedTiles === 0) return;
+      const multiplier = parseFloat(document.getElementById('mines-multiplier').textContent);
+      const win = Math.floor(currentBet * multiplier);
+      balance += win;
+      alert(`✅ Retiraste ${win} R$ (${multiplier}x)!`);
+      minesInPlay = false;
+      updateBalance();
+    }
+
+    function startMines() {
+      if (balance < currentBet) return alert("Saldo insuficiente!");
+      balance -= currentBet;
+      updateBalance();
+      createMinesGrid();
+    }
+
+    // ====================== CRASH ======================
+    let crashInterval = null;
+    let multiplier = 1;
+    let isCrashed = false;
+    let betPlaced = false;
+    let canvas, ctx;
+
+    function initCrash() {
+      canvas = document.getElementById('crash-canvas');
+      ctx = canvas.getContext('2d');
+      resetCrash();
+    }
+
+    function resetCrash() {
+      multiplier = 1;
+      isCrashed = false;
+      betPlaced = false;
+      document.getElementById('crash-multiplier').textContent = '1.00x';
+      document.getElementById('crash-status').textContent = 'Aguardando aposta...';
+      document.getElementById('bet-crash-btn').classList.remove('hidden');
+      document.getElementById('cashout-crash-btn').classList.add('hidden');
+      if (crashInterval) clearInterval(crashInterval);
+      drawCrashLine(1);
+    }
+
+    function drawCrashLine(mult) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Fundo neon
+      ctx.strokeStyle = '#22d3ee';
+      ctx.lineWidth = 8;
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = '#22d3ee';
+      
+      ctx.beginPath();
+      ctx.moveTo(50, canvas.height - 50);
+      
+      const points = 80;
+      for (let i = 0; i <= points; i++) {
+        const x = 50 + (canvas.width - 100) * (i / points);
+        const y = canvas.height - 50 - (mult * 2.8 * i);
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Foguete
+      ctx.fillStyle = '#ec4899';
+      ctx.fillRect(canvas.width - 80, canvas.height - 50 - (mult * 2.8 * points) - 30, 40, 30);
+    }
+
+    function placeCrashBet() {
+      if (balance < currentBet) return alert("Saldo insuficiente!");
+      balance -= currentBet;
+      updateBalance();
+      betPlaced = true;
+      document.getElementById('bet-crash-btn').classList.add('hidden');
+      document.getElementById('cashout-crash-btn').classList.remove('hidden');
+      document.getElementById('crash-status').textContent = 'JOGO INICIADO!';
+      
+      let crashPoint = 1.3 + Math.random() * 8; // crash entre 1.3x e 9.3x
+      
+      crashInterval = setInterval(() => {
+        multiplier += 0.07 + Math.random() * 0.08;
+        document.getElementById('crash-multiplier').textContent = multiplier.toFixed(2) + 'x';
+        drawCrashLine(multiplier);
+        
+        if (multiplier >= crashPoint) {
+          clearInterval(crashInterval);
+          isCrashed = true;
+          document.getElementById('crash-status').innerHTML = `<span class="text-red-500">CRASHED @ ${multiplier.toFixed(2)}x</span>`;
+          document.getElementById('cashout-crash-btn').classList.add('hidden');
+          if (betPlaced) alert(`💥 CRASH! Perdeste os ${currentBet} R$`);
+          setTimeout(resetCrash, 2200);
+        }
+      }, 60);
+    }
+
+    function cashOutCrash() {
+      if (!betPlaced || isCrashed) return;
+      clearInterval(crashInterval);
+      const win = Math.floor(currentBet * multiplier);
+      balance += win;
+      updateBalance();
+      alert(`🚀 RETIRASTE COM SUCESSO! +${win} R$ (${multiplier.toFixed(2)}x)`);
+      resetCrash();
+    }
+
+    // ====================== INICIALIZAÇÃO ======================
+    function resetBalance() {
+      if (confirm('Resetar saldo para 5000 R$?')) {
+        balance = 5000;
+        updateBalance();
+      }
+    }
+
+    window.onload = () => {
+      updateBalance();
+      renderGame();
+      
+      // Tailwind script
+      return;
+    };
+  </script>
+</body>
+</html>
